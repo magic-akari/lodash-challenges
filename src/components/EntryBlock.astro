@@ -1,0 +1,109 @@
+---
+import type { ChallengeEntry } from "../domain/challenge";
+
+type Props = {
+	entry: ChallengeEntry;
+	mode: "browse" | "problem";
+};
+
+const { entry, mode } = Astro.props;
+const clickable = mode === "browse";
+const linkLabel = `Open challenge _.${entry.fullName}`;
+---
+
+<article
+	class:list={["doc-entry", clickable && "is-clickable"]}
+	id={`entry-${entry.slug}`}
+>
+	<slot />
+	{clickable && <a class="entry-block-link" href={entry.route} aria-label={linkLabel}></a>}
+</article>
+
+<style>
+.doc-entry {
+	border-top: 1px solid var(--line);
+	margin: 0 calc(0px - var(--doc-gutter, 40px));
+	padding: 32px var(--doc-gutter, 40px);
+	position: relative;
+}
+
+.doc-entry.is-clickable {
+	cursor: pointer;
+}
+
+.doc-entry.is-clickable:hover {
+	background: #fafcff;
+}
+
+.entry-block-link {
+	display: block;
+	inset: 0;
+	position: absolute;
+	text-decoration: none;
+}
+
+.entry-block-link:focus-visible {
+	outline: 2px solid var(--brand);
+	outline-offset: -4px;
+}
+
+.doc-entry :global(h3) {
+	background: var(--background);
+	color: var(--text);
+	font-size: 20px;
+	font-weight: 700;
+	margin: -32px calc(0px - var(--doc-gutter, 40px)) 24px;
+	overflow-x: auto;
+	padding: 28px var(--doc-gutter, 40px);
+	white-space: nowrap;
+}
+
+.doc-entry :global(.entry-title-link) {
+	color: inherit;
+}
+
+.doc-entry :global(h4) {
+	font-size: 16px;
+	font-weight: 700;
+	margin: 24px 0 8px;
+}
+
+.doc-entry :global(p),
+.doc-entry :global(ol) {
+	margin: 12px 0;
+}
+
+.doc-entry :global(ol) {
+	list-style: none;
+	padding-left: 16px;
+}
+
+.doc-entry :global(li + li) {
+	margin-top: 8px;
+}
+
+.doc-entry :global(h4 + ol code),
+.doc-entry :global(em) {
+	color: var(--brand);
+	font-family: Consolas, "Courier New", monospace;
+	font-weight: 700;
+}
+
+.doc-entry :global(.highlight),
+.doc-entry :global(pre) {
+	background: var(--code-bg);
+	color: var(--code-color);
+	margin: 16px calc(0px - var(--doc-gutter, 40px));
+	overflow-x: auto;
+	padding: 24px var(--doc-gutter, 40px);
+}
+
+.doc-entry :global(.highlight pre),
+.doc-entry :global(pre) {
+	margin: 0 calc(0px - var(--doc-gutter, 40px));
+}
+
+.doc-entry :global(pre code) {
+	color: inherit;
+}
+</style>

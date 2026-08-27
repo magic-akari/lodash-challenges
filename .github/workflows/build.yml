@@ -1,0 +1,37 @@
+name: Build site
+
+on:
+    workflow_dispatch:
+    pull_request:
+    push:
+
+permissions:
+    contents: read
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v7
+              with:
+                  node-version-file: .node-version
+
+            - name: Enable Corepack
+              run: corepack enable
+
+            - name: Install dependencies
+              run: pnpm ci
+
+            - name: Build
+              run: pnpm build
+
+            - name: Upload site artifact
+              uses: actions/upload-artifact@v7
+              with:
+                  name: site
+                  path: dist
+                  if-no-files-found: error

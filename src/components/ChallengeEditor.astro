@@ -1,0 +1,90 @@
+---
+import { stringifyForScript } from "astro/runtime/server/escape.js";
+import type { ChallengeEntry, ChallengeRuntimeEntry } from "../domain/challenge";
+
+type Props = {
+	entry: ChallengeEntry;
+};
+
+const { entry } = Astro.props;
+const challengeEntry = {
+	name: entry.name,
+	aliases: entry.aliases,
+	starterCode: entry.starterCode,
+	examples: entry.examples,
+	testModuleIds: entry.testModuleIds,
+} satisfies ChallengeRuntimeEntry;
+const challengeJson = stringifyForScript(challengeEntry);
+---
+
+<section class="challenge-shell" data-problem-id={entry.id}>
+	<script is:inline type="application/json" class="challenge-data" set:html={challengeJson}></script>
+	<div class="editor-toolbar" aria-label="Challenge actions">
+		<button type="button" data-run-examples>Run Examples</button>
+		<button type="button" data-check-tests class="primary">Check Tests</button>
+	</div>
+	<div class="editor-host" data-editor-host></div>
+	<output class="runner-output" data-runner-output aria-live="polite"
+	>Run examples or check tests to see results here.</output>
+</section>
+
+<script>
+import { mountChallengeEditors } from "../lib/challenge-editor";
+mountChallengeEditors();
+</script>
+
+<style>
+.challenge-shell {
+	margin-top: 24px;
+	padding-top: 24px;
+}
+
+.editor-toolbar {
+	display: flex;
+	gap: 10px;
+	margin-bottom: 12px;
+	position: sticky;
+	top: 60px;
+}
+
+.editor-toolbar button {
+	background: #e8f2ff;
+	border: 0;
+	border-radius: 5px;
+	color: var(--link);
+	cursor: pointer;
+	font: inherit;
+	font-size: 14px;
+	padding: 9px 14px;
+}
+
+.editor-toolbar button.primary {
+	background: var(--brand);
+	color: #fff;
+}
+
+.editor-toolbar button:disabled {
+	cursor: wait;
+	opacity: 0.7;
+}
+
+.editor-host {
+	border: solid var(--line);
+	border-width: 1px 0;
+	margin: 0 calc(0px - var(--doc-gutter, 40px));
+	overflow: hidden;
+}
+
+.runner-output {
+	background: #f7f7f7;
+	box-sizing: border-box;
+	display: block;
+	font-family: Consolas, "Courier New", monospace;
+	font-size: 13px;
+	height: 160px;
+	margin: 12px calc(0px - var(--doc-gutter, 40px));
+	overflow: auto;
+	padding: 24px var(--doc-gutter, 40px);
+	white-space: pre-wrap;
+}
+</style>

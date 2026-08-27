@@ -1,0 +1,18 @@
+{
+	"indentWidth": 4,
+	"lineWidth": 120,
+	"newLineKind": "lf",
+	"useTabs": true,
+
+	"biome": {},
+
+	"excludes": ["*-lock.yaml"],
+
+	"plugins": [
+		"npm:@dprint/biome",
+		"npm:@dprint/markdown",
+		"npm:dprint-plugin-malva",
+		"npm:dprint-plugin-markup",
+		"npm:dprint-plugin-yaml"
+	]
+}

@@ -1,0 +1,229 @@
+---
+import { Menu, X } from "@lucide/astro";
+import ChallengeNavigation from "../components/ChallengeNavigation.astro";
+import type { ProblemGroup } from "../lib/challenges";
+import "../styles/global.css";
+
+type Props = {
+	title: string;
+	entriesByCategory: ProblemGroup[];
+	version: string;
+	activeSlug?: string;
+};
+
+const { title, activeSlug, entriesByCategory, version } = Astro.props;
+---
+
+<html lang="en" class="docs">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body>
+		<header class="site-header">
+			<a class="logo" href="/" aria-label="Lodash Challenges">Lodash</a>
+			<div class="site-title">Lodash Challenges</div>
+			<div class="version">v{version}</div>
+			<input
+				id="toc-toggle"
+				class="toc-toggle"
+				type="checkbox"
+				aria-label="Toggle challenge navigation"
+				aria-controls="challenge-navigation"
+			/>
+			<label class="toc-toggle-button" for="toc-toggle" aria-hidden="true">
+				<Menu
+					class="toc-toggle-icon toc-toggle-icon-menu"
+					size={22}
+					stroke-width={2.25}
+					aria-hidden="true"
+				/>
+				<X
+					class="toc-toggle-icon toc-toggle-icon-close"
+					size={22}
+					stroke-width={2.25}
+					aria-hidden="true"
+				/>
+			</label>
+		</header>
+		<main class="doc-main">
+			<ChallengeNavigation entriesByCategory={entriesByCategory} activeSlug={activeSlug} />
+			<section class="doc-container">
+				<slot />
+			</section>
+		</main>
+		<script>
+		const siteHeader = document.querySelector<HTMLElement>(".site-header");
+siteHeader?.addEventListener("click", (event) => {
+	if (event.target instanceof Element && event.target.closest("a, button, input, label")) return;
+	window.scrollTo({ top: 0, behavior: "smooth" });
+});
+		</script>
+	</body>
+</html>
+
+<style>
+.site-header {
+	align-items: center;
+	background: var(--foreground);
+	box-shadow: 0 0 22.5px color-mix(in srgb, var(--shadow), transparent 45%);
+	display: flex;
+	gap: 16px;
+	height: 58px;
+	padding: 0 24px;
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+
+.logo {
+	background: var(--brand);
+	border-radius: 5px;
+	color: #fff;
+	display: inline-grid;
+	font-size: 0;
+	height: 36px;
+	place-items: center;
+	width: 36px;
+}
+
+.logo::before {
+	content: "_";
+	font-size: 24px;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.site-title {
+	color: var(--text);
+	font-size: 18px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.version {
+	color: var(--muted);
+	font-size: 14px;
+	margin-left: auto;
+	white-space: nowrap;
+}
+
+.toc-toggle,
+.toc-toggle-button {
+	display: none;
+}
+
+.doc-main {
+	display: grid;
+	grid-template-columns: 310px minmax(0, 1fr);
+	min-height: calc(100vh - 58px);
+}
+
+.doc-container {
+	--doc-gutter: 40px;
+	background: var(--foreground);
+	overflow-x: hidden;
+	padding: 0 var(--doc-gutter) 40px;
+}
+
+.doc-container :global(.doc-section) {
+	margin: 0 auto;
+}
+
+.doc-container :global(.category-section) {
+	padding-top: 24px;
+}
+
+.doc-container :global(.category-section > h2) {
+	color: var(--text);
+	font-size: 24px;
+	font-weight: 400;
+	margin: 0 0 16px;
+}
+
+@media (max-width: 767px) {
+	.site-header {
+		gap: 12px;
+		padding: 0 16px;
+	}
+
+	.site-title {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.toc-toggle {
+		clip: rect(0 0 0 0);
+		clip-path: inset(50%);
+		display: block;
+		height: 1px;
+		overflow: hidden;
+		position: absolute;
+		white-space: nowrap;
+		width: 1px;
+	}
+
+	.toc-toggle-button {
+		border-radius: 5px;
+		color: var(--text);
+		cursor: pointer;
+		display: grid;
+		flex: 0 0 36px;
+		height: 36px;
+		margin: 0 0 0 4px;
+		place-items: center;
+		position: relative;
+		transition: background-color 160ms ease, color 160ms ease;
+		width: 36px;
+	}
+
+	.toc-toggle-button :global(.toc-toggle-icon) {
+		grid-area: 1 / 1;
+		transition: opacity 180ms ease, transform 180ms ease;
+	}
+
+	.toc-toggle-button:hover {
+		background-color: #f1f7ff;
+		color: #252525;
+	}
+
+	.toc-toggle:focus-visible + .toc-toggle-button {
+		outline: 2px solid var(--brand);
+		outline-offset: 2px;
+	}
+
+	.toc-toggle-button :global(.toc-toggle-icon-menu) {
+		opacity: 1;
+		transform: rotate(0) scale(1);
+	}
+
+	.toc-toggle-button :global(.toc-toggle-icon-close) {
+		opacity: 0;
+		transform: rotate(-90deg) scale(0.72);
+	}
+
+	.toc-toggle:checked + .toc-toggle-button :global(.toc-toggle-icon-menu) {
+		opacity: 0;
+		transform: rotate(90deg) scale(0.72);
+	}
+
+	.toc-toggle:checked + .toc-toggle-button :global(.toc-toggle-icon-close) {
+		opacity: 1;
+		transform: rotate(0) scale(1);
+	}
+
+	.doc-main {
+		display: block;
+	}
+
+	.doc-container {
+		--doc-gutter: 20px;
+		padding-bottom: 30px;
+	}
+}
+</style>

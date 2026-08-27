@@ -1,0 +1,37 @@
+---
+import { getCollection, render } from "astro:content";
+import ChallengeEditor from "../../components/ChallengeEditor.astro";
+import EntryBlock from "../../components/EntryBlock.astro";
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import { getLodashVersion, groupEntriesByCategory } from "../../lib/challenges";
+
+export async function getStaticPaths() {
+	const problems = await getCollection("problems");
+	return problems.map((entry) => ({
+		params: { slug: entry.data.slug },
+		props: { entry, problems },
+	}));
+}
+
+const { entry, problems } = Astro.props;
+const entriesByCategory = groupEntriesByCategory(problems);
+const version = getLodashVersion(problems);
+const { Content } = await render(entry);
+---
+
+<DocsLayout
+	title={`_.${entry.data.fullName} | Lodash Challenges`}
+	activeSlug={entry.data.slug}
+	entriesByCategory={entriesByCategory}
+	version={version}
+>
+	<div class="doc-section">
+		<section class="category-section" id={entry.data.category.toLowerCase()}>
+			<h2><code>{entry.data.category}</code></h2>
+			<EntryBlock entry={entry.data} mode="problem">
+				<Content />
+				<ChallengeEditor entry={entry.data} />
+			</EntryBlock>
+		</section>
+	</div>
+</DocsLayout>

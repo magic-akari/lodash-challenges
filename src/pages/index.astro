@@ -1,0 +1,36 @@
+---
+import { getCollection, render } from "astro:content";
+import EntryBlock from "../components/EntryBlock.astro";
+import DocsLayout from "../layouts/DocsLayout.astro";
+import { getLodashVersion, groupEntriesByCategory } from "../lib/challenges";
+
+const problems = await getCollection("problems");
+const entriesByCategory = groupEntriesByCategory(problems);
+const renderedGroups = await Promise.all(
+	entriesByCategory.map(async (group) => ({
+		...group,
+		entries: await Promise.all(
+			group.entries.map(async (entry) => ({
+				entry,
+				Content: (await render(entry)).Content,
+			})),
+		),
+	})),
+);
+const version = getLodashVersion(problems);
+---
+
+<DocsLayout title="Lodash Challenges" entriesByCategory={entriesByCategory} version={version}>
+	<div class="doc-section">
+		{renderedGroups.map(({ category, entries }) => (
+			<section class="category-section" id={category.toLowerCase()}>
+				<h2><code>{category}</code></h2>
+				{entries.map(({ entry, Content }) => (
+					<EntryBlock entry={entry.data} mode="browse">
+						<Content />
+					</EntryBlock>
+				))}
+			</section>
+		))}
+	</div>
+</DocsLayout>

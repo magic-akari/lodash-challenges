@@ -1,0 +1,294 @@
+---
+import { Check, SquareMinus, SquarePlus } from "@lucide/astro";
+import type { ProblemGroup } from "../lib/challenges";
+import { TOC_SCROLL_POSITION_KEY } from "../lib/challenge-navigation";
+
+type Props = {
+	entriesByCategory: ProblemGroup[];
+	activeSlug?: string;
+};
+
+const { activeSlug, entriesByCategory } = Astro.props;
+const groups = entriesByCategory.map((group) => ({
+	...group,
+	listId: `toc-group-${group.category.toLowerCase().replace(/\s+/g, "-")}`,
+}));
+---
+
+<aside
+	id="challenge-navigation"
+	class="toc-container"
+	aria-label="Challenge navigation"
+	data-restoring-toc-scroll
+	data-scroll-position-key={TOC_SCROLL_POSITION_KEY}
+>
+	<div class="search">
+		<input
+			data-search-input
+			type="search"
+			placeholder="Search"
+			aria-label="Search lodash functions"
+		/>
+	</div>
+	<nav>
+		{groups.map(({ category, entries, listId }) => (
+			<section class="toc-group">
+				<h2>
+					<button
+						class="toc-group-toggle"
+						type="button"
+						aria-controls={listId}
+						aria-expanded="true"
+						aria-label={`Collapse ${category} category`}
+						data-category={category}
+						data-toc-group-toggle
+					>
+						<SquareMinus
+							class="toc-group-icon toc-group-icon-collapse"
+							size={14}
+							stroke-width={2}
+							aria-hidden="true"
+						/>
+						<SquarePlus
+							class="toc-group-icon toc-group-icon-expand"
+							size={14}
+							stroke-width={2}
+							aria-hidden="true"
+						/>
+						<code>{category}</code>
+					</button>
+				</h2>
+				<ul id={listId}>
+					{entries.map((entry) => (
+						<li
+							data-toc-item
+							data-search-text={`${entry.data.name} ${entry.data.signature} ${category}`}
+						>
+							<a
+								class:list={[entry.data.slug === activeSlug && "active"]}
+								aria-current={entry.data.slug === activeSlug ? "page" : undefined}
+								data-problem-id={entry.data.id}
+								href={entry.data.route}
+							>
+								<code>_.{entry.data.fullName}</code>
+								<span class="toc-accepted" data-accepted-status hidden>
+									<Check size={16} stroke-width={2.5} aria-hidden="true" />
+									<span class="visually-hidden">Accepted</span>
+								</span>
+							</a>
+						</li>
+					))}
+				</ul>
+			</section>
+		))}
+	</nav>
+</aside>
+
+<script is:inline>
+{
+	const tocContainer = document.querySelector(".toc-container");
+	const storageKey = tocContainer?.dataset.scrollPositionKey;
+
+	try {
+		const savedPosition = storageKey ? sessionStorage.getItem(storageKey) : null;
+		const scrollTop = savedPosition === null ? Number.NaN : Number.parseFloat(savedPosition);
+		if (tocContainer && Number.isFinite(scrollTop)) {
+			tocContainer.scrollTop = Math.max(0, scrollTop);
+		}
+	} catch {
+	} finally {
+		tocContainer?.removeAttribute("data-restoring-toc-scroll");
+	}
+}
+</script>
+
+<script>
+import { mountChallengeNavigation } from "../lib/challenge-navigation";
+mountChallengeNavigation();
+</script>
+
+<style>
+.toc-container {
+	--toc-gutter: 24px;
+	background: var(--foreground);
+	border-right: 1px solid var(--line);
+	height: calc(100vh - 58px);
+	overflow-y: auto;
+	padding: 24px 0;
+	position: sticky;
+	top: 58px;
+}
+
+.toc-container[data-restoring-toc-scroll] {
+	visibility: hidden;
+}
+
+.search {
+	padding: 0 var(--toc-gutter);
+}
+
+.search input {
+	appearance: none;
+	border: 0;
+	border-bottom: 2px solid var(--line);
+	border-radius: 0;
+	color: var(--text);
+	font: inherit;
+	font-size: 14px;
+	padding: 0 0 10px;
+	width: 100%;
+}
+
+.search input:focus {
+	border-bottom-color: var(--brand);
+	outline: 0;
+}
+
+.toc-group h2 {
+	font-size: 16px;
+	font-weight: 400;
+	margin: 24px 0 8px;
+	padding: 0 var(--toc-gutter);
+}
+
+.toc-group-toggle {
+	align-items: center;
+	appearance: none;
+	background: none;
+	border: 0;
+	color: inherit;
+	cursor: pointer;
+	display: flex;
+	font: inherit;
+	gap: 6px;
+	padding: 0;
+	text-align: left;
+	width: 100%;
+}
+
+.toc-group-toggle:hover {
+	color: #252525;
+}
+
+.toc-group-toggle:focus-visible {
+	border-radius: 3px;
+	outline: 2px solid var(--brand);
+	outline-offset: 3px;
+}
+
+.toc-group-toggle :global(.toc-group-icon) {
+	flex: 0 0 auto;
+}
+
+.toc-group-toggle :global(.toc-group-icon-expand) {
+	display: none;
+}
+
+.toc-group-toggle[aria-expanded="false"] :global(.toc-group-icon-collapse) {
+	display: none;
+}
+
+.toc-group-toggle[aria-expanded="false"] :global(.toc-group-icon-expand) {
+	display: block;
+}
+
+.toc-group ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	position: relative;
+}
+
+.toc-group ul::before {
+	border-left: 1px dashed var(--line);
+	bottom: 0;
+	content: "";
+	left: var(--toc-gutter);
+	pointer-events: none;
+	position: absolute;
+	top: 0;
+}
+
+.toc-group li {
+	padding: 1px 0;
+}
+
+.toc-group a {
+	align-items: center;
+	color: var(--text);
+	display: flex;
+	font-size: 14px;
+	gap: 8px;
+	padding: 3.8px var(--toc-gutter) 3.8px calc(var(--toc-gutter) + 16px);
+	width: 100%;
+}
+
+.toc-group a.active {
+	background: linear-gradient(
+		to right,
+		transparent var(--toc-gutter),
+		#f1f7ff var(--toc-gutter)
+	);
+	color: #252525;
+	position: relative;
+}
+
+.toc-group a.active::before {
+	border-left: 1px dashed var(--brand);
+	bottom: 0;
+	content: "";
+	left: var(--toc-gutter);
+	pointer-events: none;
+	position: absolute;
+	top: 0;
+}
+
+.toc-group a:hover {
+	color: #252525;
+}
+
+.toc-accepted {
+	color: #16a34a;
+	display: inline-flex;
+	margin-left: auto;
+}
+
+.toc-accepted[hidden] {
+	display: none;
+}
+
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+.hidden {
+	display: none;
+}
+
+@media (max-width: 767px) {
+	.toc-container {
+		border-left: 1px solid var(--line);
+		border-right: 0;
+		bottom: 0;
+		box-shadow: -12px 0 24px color-mix(in srgb, var(--shadow), transparent 75%);
+		display: none;
+		height: auto;
+		max-height: none;
+		position: fixed;
+		right: 0;
+		top: 58px;
+		width: min(310px, calc(100vw - 48px));
+		z-index: 9;
+	}
+
+	:global(body:has(.toc-toggle:checked)) .toc-container {
+		display: block;
+	}
+}
+</style>
