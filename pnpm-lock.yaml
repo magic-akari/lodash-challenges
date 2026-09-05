@@ -34,7 +34,7 @@ importers:
         version: 6.43.9
       '@dprint/biome':
         specifier: ^0.13.8
-        version: 0.13.8
+        version: 0.13.10
       '@dprint/markdown':
         specifier: ^0.22.1
         version: 0.22.1
@@ -367,8 +367,8 @@ packages:
     cpu: [x64]
     os: [android]
 
-  '@dprint/biome@0.13.8':
-    resolution: {integrity: sha512-8Y598/XTNtqoGZHuaogMv8OFUAgUl/HcfhM6krrNjY2B80jUKWSIoV8C/RjmkUBX2teFkO0Po9xXlzfzvTohYw==}
+  '@dprint/biome@0.13.10':
+    resolution: {integrity: sha512-7CrafsKcOila1cvKIyzm3KhnMxEqgo3SeangO/DZOOp3GGAqHGyslxfI5hANl2fO8IaLqk5qKzADZypXy5DdTA==}
 
   '@dprint/darwin-arm64@0.56.1':
     resolution: {integrity: sha512-1U2qE8i0Np5bY7aB+Mq6DqIwI/DQgR4haQFR0ixxsQ9gXQSVe8YQTzM33Kw65V5FVwTn5sNcaqjlm0mYTLt56w==}
@@ -2362,7 +2362,7 @@ snapshots:
   '@dprint/android-x64@0.56.1':
     optional: true
 
-  '@dprint/biome@0.13.8': {}
+  '@dprint/biome@0.13.10': {}
 
   '@dprint/darwin-arm64@0.56.1':
     optional: true
