@@ -36,8 +36,8 @@ importers:
         specifier: ^0.13.8
         version: 0.13.8
       '@dprint/markdown':
-        specifier: ^0.22.1
-        version: 0.22.1
+        specifier: ^0.23.0
+        version: 0.23.3
       '@lucide/astro':
         specifier: ^1.34.0
         version: 1.34.0(astro@7.2.7(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.3.0)(yaml@2.9.0))
@@ -434,8 +434,8 @@ packages:
     os: [linux]
     libc: [musl]
 
-  '@dprint/markdown@0.22.1':
-    resolution: {integrity: sha512-L5BYR66HNxs5vmGGYze/SP9wrIJnHIhbZGCbdP2N+o5gbukhau3ulFbaG/rB7u9H51LXGePue1sFXVgS5IiU2A==}
+  '@dprint/markdown@0.23.3':
+    resolution: {integrity: sha512-llL0a6tjViXG8OIgyibfJZxW4vN3KsfoTPOl/LobFjCmdiunopoIxlDrjTR/PWHt9WJRd98m+TMfp4bb2Vc6vQ==}
 
   '@dprint/win32-arm64@0.56.1':
     resolution: {integrity: sha512-yItk0aKrANS3Y7CWEcOt4zAD0c0zdLckqFte6tB2MtijV32wpS56gbUn3cQhcjoD4zuy+YvCuBuxopr5yK43Ew==}
@@ -2397,7 +2397,7 @@ snapshots:
   '@dprint/linux-x64-musl@0.56.1':
     optional: true
 
-  '@dprint/markdown@0.22.1': {}
+  '@dprint/markdown@0.23.3': {}
 
   '@dprint/win32-arm64@0.56.1':
     optional: true
